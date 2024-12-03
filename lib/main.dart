@@ -211,15 +211,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Initialize bookedTickets as an empty list
+    bookedTickets = [];
+
+    // Initialize pages with references to widgets
     _pages = [
       HomePage(), // Assuming you have a HomePage widget
       BioskopMenu(), // Assuming you have a BioskopMenu widget
-      TicketMenu(onBook: (title, image) {
-        // Add the booked movie to the list
-        setState(() {
-          bookedTickets.add({"title": title, "image": image});
-        });
-      }),
+      TicketMenu(
+        onBook: (movie) {
+          // Add the booked movie to the list
+          setState(() {
+            bookedTickets.add(movie);
+          });
+        },
+      ),
       TicketKuMenu(bookedTickets: bookedTickets),
     ];
   }
@@ -1003,7 +1010,7 @@ class _BioskopMenuState extends State<BioskopMenu> {
 // }
 
 class TicketMenu extends StatefulWidget {
-  final Function(String, String) onBook;
+  final Function(Map<String, String>) onBook;
 
   TicketMenu({required this.onBook});
 
@@ -1014,22 +1021,36 @@ class TicketMenu extends StatefulWidget {
 class _TicketMenuState extends State<TicketMenu> {
   final List<Map<String, String>> moviesSedangTayang = [
     {
-      "title": "Ambatman",
-      "image": "assets/Ambatman.jpg",
-      "genre": "Action, Comedy"
+      "title": "Soul",
+      "image": "assets/soul.jpg",
+      "genre": "Cartoon",
+      "age": "13",
+      "rating": "4",
     },
-    {"title": "John Wick", "image": "assets/johnwick.jpg", "genre": "Action"},
-    {"title": "Coco", "image": "assets/Coco.jpg", "genre": "Action, Adventure"},
+    {
+      "title": "John Wick",
+      "image": "assets/johnwick.jpg",
+      "genre": "Action",
+      "age": "18",
+      "rating": "5",
+    },
   ];
 
   final List<Map<String, String>> moviesAkanTayang = [
-    {"title": "Star Wars", "image": "assets/SW.jpg", "genre": "Action"},
     {
-      "title": "Moana",
-      "image": "assets/film-moana-2_169.jpeg",
-      "genre": "Cartoon"
+      "title": "Coco",
+      "image": "assets/Coco.jpg",
+      "genre": "Cartoon",
+      "age": "13",
+      "rating": "4",
     },
-    {"title": "Open Heimer", "image": "assets/openh.jpg", "genre": "Action"},
+    {
+      "title": "Dune",
+      "image": "assets/dune.jpg",
+      "genre": "Action",
+      "age": "18",
+      "rating": "3",
+    },
   ];
 
   String currentCategory =
@@ -1037,7 +1058,6 @@ class _TicketMenuState extends State<TicketMenu> {
 
   @override
   Widget build(BuildContext context) {
-    // Determine the number of columns based on screen width
     double screenWidth = MediaQuery.of(context).size.width;
     int crossAxisCount = screenWidth > 600
         ? 3
@@ -1049,7 +1069,7 @@ class _TicketMenuState extends State<TicketMenu> {
       ),
       body: Column(
         children: [
-          // Section for clickable categories
+          // Category selector
           Container(
             padding: const EdgeInsets.all(8.0),
             color: Colors.white,
@@ -1076,7 +1096,7 @@ class _TicketMenuState extends State<TicketMenu> {
                         fontWeight: FontWeight.bold,
                         decoration: currentCategory == "Sedang Tayang"
                             ? TextDecoration.underline
-                            : TextDecoration.none, // Underline if selected
+                            : TextDecoration.none,
                       ),
                     ),
                   ),
@@ -1102,7 +1122,7 @@ class _TicketMenuState extends State<TicketMenu> {
                         fontWeight: FontWeight.bold,
                         decoration: currentCategory == "Akan Tayang"
                             ? TextDecoration.underline
-                            : TextDecoration.none, // Underline if selected
+                            : TextDecoration.none,
                       ),
                     ),
                   ),
@@ -1111,12 +1131,11 @@ class _TicketMenuState extends State<TicketMenu> {
             ),
           ),
 
-          // Display movies based on selected category
+          // Movie display
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // Display movies in grid format based on currentCategory
                   currentCategory == "Sedang Tayang"
                       ? MovieGrid(
                           movies: moviesSedangTayang, onBook: widget.onBook)
@@ -1134,27 +1153,23 @@ class _TicketMenuState extends State<TicketMenu> {
 
 class MovieGrid extends StatelessWidget {
   final List<Map<String, String>> movies;
-  final Function(String, String) onBook;
+  final Function(Map<String, String>) onBook;
 
   MovieGrid({required this.movies, required this.onBook});
 
   @override
   Widget build(BuildContext context) {
-    // Determine the number of columns based on screen width
     double screenWidth = MediaQuery.of(context).size.width;
-    int crossAxisCount = screenWidth > 600
-        ? 3
-        : 2; // 3 columns for wide screens, 2 columns for narrow screens
+    int crossAxisCount = screenWidth > 600 ? 3 : 2;
 
     return GridView.builder(
-      shrinkWrap: true, // Ensures it only takes as much space as it needs
-      physics:
-          NeverScrollableScrollPhysics(), // Disable scrolling inside the GridView
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount, // Number of items per row
-        crossAxisSpacing: 10.0, // Space between columns
-        mainAxisSpacing: 10.0, // Space between rows
-        childAspectRatio: 0.75, // Aspect ratio for each item (height vs width)
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: 10.0,
+        mainAxisSpacing: 10.0,
+        childAspectRatio: 0.75,
       ),
       itemCount: movies.length,
       itemBuilder: (context, index) {
@@ -1164,7 +1179,6 @@ class MovieGrid extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Movie image
               Image.asset(
                 movies[index]['image']!,
                 height: 200,
@@ -1173,21 +1187,52 @@ class MovieGrid extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  title: Text(
-                    movies[index]['title']!,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      movies[index]['title']!,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
-                  ),
-                  subtitle: Text(movies[index]['genre']!),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      onBook(movies[index]['title']!, movies[index]['image']!);
-                    },
-                  ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Genre: ${movies[index]['genre']} - Age: ${movies[index]['age']}",
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: List.generate(5, (starIndex) {
+                        return Icon(
+                          starIndex < int.parse(movies[index]['rating']!)
+                              ? Icons.star
+                              : Icons.star_border,
+                          color: Colors.amber,
+                          size: 16,
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 4),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Pass the full movie data to the onBook callback
+                          onBook(movies[index]);
+                        },
+                        child: const Text("Book"),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          textStyle: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -1205,70 +1250,87 @@ class TicketKuMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Determine the number of columns based on screen width
     double screenWidth = MediaQuery.of(context).size.width;
-    int crossAxisCount = screenWidth > 600
-        ? 3
-        : 2; // 3 columns for wide screens, 2 columns for narrow screens
+    int crossAxisCount = screenWidth > 600 ? 3 : 2;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Tiket Ku")),
+      appBar: AppBar(title: const Text("Tiket Ku")),
       body: bookedTickets.isEmpty
-          ? Center(
+          ? const Center(
               child: Text(
                 "No Tickets Booked Yet",
                 style: TextStyle(fontSize: 18),
               ),
             )
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Display booked tickets in a grid format
-                  GridView.builder(
-                    shrinkWrap:
-                        true, // Ensures it only takes as much space as it needs
-                    physics:
-                        NeverScrollableScrollPhysics(), // Disable scrolling inside the GridView
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount, // Number of items per row
-                      crossAxisSpacing: 10.0, // Space between columns
-                      mainAxisSpacing: 10.0, // Space between rows
-                      childAspectRatio:
-                          0.75, // Aspect ratio for each item (height vs width)
-                    ),
-                    itemCount: bookedTickets.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        margin: const EdgeInsets.all(8.0),
-                        elevation: 4,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Movie image
-                            Image.asset(
-                              bookedTickets[index]['image']!,
-                              height: 150,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
-                                title: Text(
-                                  bookedTickets[index]['title']!,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
+          : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10.0,
+                  childAspectRatio: 0.75,
+                ),
+                itemCount: bookedTickets.length,
+                itemBuilder: (context, index) {
+                  final ticket = bookedTickets[index];
+                  final title = ticket['title'] ?? 'Untitled';
+                  final image = ticket['image'] ?? '';
+                  final genre = ticket['genre'] ?? 'Unknown';
+                  final age = ticket['age'] ?? 'N/A';
+                  final ratingStr = ticket['rating'] ?? '0';
+                  final rating = int.tryParse(ratingStr) ?? 0;
+
+                  return Card(
+                    margin: const EdgeInsets.all(8.0),
+                    elevation: 4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          image,
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
                                 ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 4),
+                              Text(
+                                "Genre: $genre - Age: $age",
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: List.generate(5, (starIndex) {
+                                  return Icon(
+                                    starIndex < rating
+                                        ? Icons.star
+                                        : Icons.star_border,
+                                    color: Colors.amber,
+                                    size: 16,
+                                  );
+                                }),
+                              ),
+                            ],
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                ],
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
     );
