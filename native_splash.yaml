@@ -1,0 +1,7 @@
+flutter_native_splash:
+  android: true
+  ios: true
+  webbrowser: true
+
+  background_color: "#001a3b"
+  background_image:"assets/TIX_splash.jpg"
