@@ -1,16 +1,6 @@
-# ukl_1
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Screenshot 2024-12-03 163031](https://github.com/user-attachments/assets/a483776d-9dee-46c8-b895-4844a10f9205)
+![Screenshot 2024-12-03 163040](https://github.com/user-attachments/assets/2adb6817-0ffd-4252-b8c4-b51a6b6bb163)
+![Screenshot 2024-12-03 163051](https://github.com/user-attachments/assets/8ac2e6d6-ed5f-4428-b7b9-09cbd53f2e19)
+![Screenshot 2024-12-03 163059](https://github.com/user-attachments/assets/33725f8d-d517-47d2-b109-4f688c7079a0)
+![Screenshot 2024-12-03 163130](https://github.com/user-attachments/assets/01234fc7-4717-4d1d-931d-04988b7434af)
+![Screenshot 2024-12-03 163141](https://github.com/user-attachments/assets/66890594-cf41-46ab-a006-999ca4c3805a)
